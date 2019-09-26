@@ -66,7 +66,7 @@ const diffChildren = (oldVChildren, newVChildren) => {
         return $parent;
     };
 };
-const diff         = (oldVTree = {}, newVTree = {}) => {
+const diff         = (oldVTree, newVTree) => {
     // let's assume oldVTree is not undefined!
     if (newVTree === undefined) {
         return $node => {

@@ -1,3 +1,3 @@
 import Vue from './App'
 
-new Vue().$mount('#app')
+new Vue().$mount('#app');

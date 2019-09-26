@@ -14,7 +14,7 @@ const renderElem = ({tagName, attrs, children}) => {
     // append all children as specified in vNode.children
     //   e.g. <div id="app"><img></div>
     for (const child of children) {
-        $el.appendChild(render(child));
+        child && $el.appendChild(render(child));
     }
 
     return $el;
