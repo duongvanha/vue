@@ -1,5 +1,7 @@
 import render from './render';
 
+const events = Symbol('events');
+
 const setNativeValue = new Set(['string', 'number']);
 
 const diffAttrs    = (oldAttrs, newAttrs) => {
@@ -8,10 +10,21 @@ const diffAttrs    = (oldAttrs, newAttrs) => {
     // setting newAttrs
     for (const [k, v] of Object.entries(newAttrs)) {
         if (oldAttrs[k] !== newAttrs[k]) {
-            patches.push($node => {
-                $node.setAttribute(k, v);
-                return $node;
-            });
+            if (typeof v == 'function' && k.startsWith('on')) {
+                patches.push($node => {
+                    const eventType = key.slice(2).toLowerCase();
+                    $node[events]   = $node[events] || {};
+                    $node.removeEventListener(eventType, $node[events][eventType]);
+                    $node[events][eventType] = v;
+                    $node.addEventListener(eventType, $node[events][eventType]);
+                    return $node
+                })
+            } else {
+                patches.push($node => {
+                    $node.setAttribute(k, v);
+                    return $node;
+                });
+            }
         }
     }
 
@@ -117,4 +130,5 @@ const diff         = (oldVTree, newVTree) => {
     };
 };
 
+export { events }
 export default diff;

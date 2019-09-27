@@ -6,6 +6,7 @@ export default class Vue {
     constructor(opts = {}) {
         this.$options         = opts;
         this.$updateComponent = this.$updateComponent.bind(this);
+        this.changeImage      = this.changeImage.bind(this);
         this.$computed        = {
             total: () => {
                 return this.price + this.quantity
@@ -21,15 +22,29 @@ export default class Vue {
             count   : 1,
             price   : 2,
             quantity: 3,
+            image   : 1,
+            images  : [
+                'http://giphygifs.s3.amazonaws.com/media/d6ZTWNjgdmUrS/giphy.gif',
+                'https://media.giphy.com/media/26gsoiMSwKSYfGb96/giphy.gif',
+                'https://media.giphy.com/media/3oriNN5kkARo7ZAhuE/giphy.gif',
+                'https://media.giphy.com/media/9PnFM8Mc4uPy6kt1km/giphy.gif',
+                'https://media.giphy.com/media/l5DSvPDptQv4i6Gt3c/giphy.gif',
+                'https://media.giphy.com/media/3ov9k78PCKPx9IoBs4/giphy.gif',
+                'http://giphygifs.s3.amazonaws.com/media/SQDhiHr5amWas/giphy.gif',
+            ],
         }
     }
 
     render() {
         return <div id="app" dataCount={this.count}>
-            <img src="https://media.giphy.com/media/cuPm4p4pClZVC/giphy.gif" alt={1}/>
+            <img src={this.images[this.image]} alt={this.image} onClick={this.changeImage}/>
             <p id={this.count}>hello</p>
             price: {this.price} quantity: {this.quantity} total: {this.total}
         </div>
+    }
+
+    changeImage() {
+        this.image = Math.round(Math.random() * (6))
     }
 
     $updateComponent() {

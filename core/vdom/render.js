@@ -1,3 +1,5 @@
+import { events } from './diff';
+
 const setNativeValue = new Set(['string', 'number']);
 
 const renderElem = ({tagName, attrs, children}) => {
@@ -8,7 +10,15 @@ const renderElem = ({tagName, attrs, children}) => {
     // add all attributs as specified in vNode.attrs
     //   e.g. <div id="app"></div>
     for (const [k, v] of Object.entries(attrs)) {
-        $el.setAttribute(k, v);
+        if (typeof v == 'function' && k.startsWith('on')) {
+            $el[events]     = $el[events] || {};
+            const eventType = k.slice(2).toLowerCase();
+            $el.removeEventListener(eventType, $el[events][eventType]);
+            $el[events][eventType] = v;
+            $el.addEventListener(eventType, $el[events][eventType]);
+        } else {
+            $el.setAttribute(k, v);
+        }
     }
 
     // append all children as specified in vNode.children
