@@ -9,7 +9,7 @@ export default class Vue {
         this.changeImage      = this.changeImage.bind(this);
         this.$computed        = {
             total: () => {
-                return this.price + this.quantity
+                return this.price * this.quantity
             },
         };
         this.$initData();
@@ -52,6 +52,7 @@ export default class Vue {
             return
         }
         const newDoms    = this.render();
+        console.log(newDoms);
         const patch      = diff(this.$doms, newDoms);
         this.$options.el = patch(this.$options.el);
 
@@ -61,13 +62,13 @@ export default class Vue {
     $initComputed() {
         this.$walk(this.$computed, (key, val) => {
             const target = () => {
+                console.log('update');
                 this[key] = val();
                 this.$updateComponent();
             };
             pushTarget(target);
             target();
 
-            this.$walk(this.$options.data, (key, val) => val);
             popTarget();
         });
 
@@ -88,11 +89,11 @@ export default class Vue {
 
         this.$doms = newDoms;
 
-        setInterval(() => {
-            this.price = this.price + 1
-            // console.log(this.price);
-            // console.log(this.total);
-        }, 1000)
+        // setInterval(() => {
+        //     this.price = this.price + 1
+        //     // console.log(this.price);
+        //     // console.log(this.total);
+        // }, 1000)
 
     }
 
@@ -105,14 +106,16 @@ export default class Vue {
     $reactiveData(data) {
         pushTarget(this.$updateComponent);
         this.$walk(data, (key, val) => {
-            const dep = new Dep(data, key, val);
+            const dep = new Dep();
 
             const attributes = {
                 get() {
+                    console.log('get');
                     dep.depend();
                     return val
                 },
                 set(newVal) {
+                    console.log('set');
                     setTimeout(dep.notify.bind(dep), 0);
                     val = newVal;
                 },
